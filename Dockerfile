@@ -1,9 +1,9 @@
 FROM node:18-bullseye
 
-# Skip Puppeteer's Chromium download
+# Skip Puppeteer's default Chromium download
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
-# Install Chromium and system dependencies
+# Install Chromium and necessary dependencies
 RUN apt-get update && apt-get install -y \
   chromium \
   fonts-liberation \
@@ -26,20 +26,21 @@ RUN apt-get update && apt-get install -y \
   wget \
   && apt-get clean
 
-# Set the working directory
+# Set working directory
 WORKDIR /app
 
-# Copy dependencies and install
+# Copy package files and install dependencies
 COPY package*.json ./
 RUN npm install
 
-# Copy the rest of your code
+# Copy application code
 COPY . .
 
-# Tell Puppeteer where Chromium is
+# Specify the path to the installed Chromium
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
-# Expose the port your app runs on
+# Expose application port
 EXPOSE 3000
 
+# Start the application
 CMD ["node", "index.js"]
